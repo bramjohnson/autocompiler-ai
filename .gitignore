@@ -1,0 +1,9 @@
+backup/**
+backup/auto/**
+!backup/auto/
+network/Pickles**
+network/speccy_model
+venv/**
+config.yaml
+cover.*
+run.bat
