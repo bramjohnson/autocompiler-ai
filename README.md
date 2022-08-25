@@ -48,4 +48,4 @@ Use the left/right arrow keys to decrease/increase the volume.
 - D: Remove
 
 # Example
-![What the program looks like](examples.png)
+![What the program looks like](example.png)
