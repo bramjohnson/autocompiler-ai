@@ -40,9 +40,12 @@ The current playlist can be renamed through "Edit/Rename Playlist..."
 - Ctrl+S: Save as .apm
 #### Seek
 Using numbers 1-9 to skip through the song.
-### Volume
+#### Volume
 Use the left/right arrow keys to decrease/increase the volume.
 #### Current song
 - A: Add Simliar
 - S: Keep
 - D: Remove
+
+# Example
+![What the program looks like](examples.png)
