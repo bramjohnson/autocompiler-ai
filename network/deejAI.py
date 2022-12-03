@@ -26,8 +26,9 @@ def most_similar(mp3tovec, positive=[], negative=[], topn=5, noise=0, filter=[""
         similar.append((track_j, cos_proximity))
     return sorted(similar, key=lambda x:-x[1])[:topn]
 
-def make_playlist(seed_tracks, size=10, lookback=3, noise=0, filter=[""], negative=[]):
-    mp3tovec = pickle.load(open(NETWORK_LOCATION, 'rb'))
+def make_playlist(seed_tracks, size=10, lookback=3, noise=0, filter=[""], negative=[], mp3tovec=None):
+    if mp3tovec == None:
+        mp3tovec = pickle.load(open(NETWORK_LOCATION, 'rb'))
     max_tries = 20
     playlist = seed_tracks
     while len(playlist) < size:
@@ -47,8 +48,9 @@ def tracks_to_m3u(fileout, tracks):
         for item in tracks:
             f.write(item + "\n")
 
-def contains_track(track):
-    mp3tovec = pickle.load(open(NETWORK_LOCATION, 'rb'))
+def contains_track(track, mp3tovec=None):
+    if mp3tovec == None:
+        mp3tovec = pickle.load(open(NETWORK_LOCATION, 'rb'))
     return track in mp3tovec
 
 def main():

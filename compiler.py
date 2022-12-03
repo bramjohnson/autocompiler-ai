@@ -1,5 +1,7 @@
-import os, time, utils, json
+import os, time, utils, json, pickle
 from network.deejAI import make_playlist, contains_track
+
+NETWORK_LOCATION = 'Network/Pickles/mp3tovecs/mp3tovec.p'
 
 class Compiler:
     def __init__(self, playlist = None, queue = [], accepted = [], removed = [], title = None) -> None:
@@ -10,6 +12,7 @@ class Compiler:
         self.queue_title_cache = []
         self.autosave = AutoSaver(5, self)
         self.filter = [""]
+        self.mp3tovec = pickle.load(open(NETWORK_LOCATION, 'rb'))
         if (playlist is not None and os.path.isfile(playlist) and playlist.endswith(".m3u8")):
             songs = open(playlist, 'r', encoding='utf-8-sig')
             for song in songs:
@@ -33,9 +36,9 @@ class Compiler:
 
     def add_similar(self):
         track = self.pop_top()
-        if not contains_track(track):
+        if not contains_track(track, self.mp3tovec):
             return
-        similar = [x for x in make_playlist([track], noise=0.07, lookback=0, filter=self.filter) if (x not in self.accepted and x not in self.queue and x not in self.removed and not x == track)]
+        similar = [x for x in make_playlist([track], noise=0.07, lookback=0, filter=self.filter, mp3tovec=self.mp3tovec) if (x not in self.accepted and x not in self.queue and x not in self.removed and not x == track)]
         self.accepted.append(track)
         self.queue.extend(similar)
         for song in similar:

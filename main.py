@@ -1,8 +1,24 @@
 from PyQt5 import QtCore, QtGui, QtWidgets, QtMultimedia
+from PyQt5.QtWidgets import QWidget
 from compiler import Compiler, CompilerLoad
 from config import OPTIONS_DICT
 import sys, os, utils, config
 
+# Auto-add songs on playlist load
+# Noise 
+# Lookback
+# Use negative
+# Similar Track size
+class Ui_Options(QWidget):
+    def __init__(self):
+        super().__init__()
+        layout = QtWidgets.QVBoxLayout()
+        self.label = QtWidgets.QLabel("Options:")
+        self.auto_add = QtWidgets.QCheckBox("Auto-add songs on playlist load")
+        layout.addWidget(self.label)
+        layout.addWidget(self.auto_add)
+        self.setLayout(layout)
+        
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
@@ -65,6 +81,7 @@ class Ui_MainWindow(object):
         self.save_shortcut = QtWidgets.QShortcut(QtGui.QKeySequence("Ctrl+S"), MainWindow)
         self.save_shortcut.activated.connect(self.save_session)
 
+        # Layout
         self.centralwidget.setSizePolicy(sizePolicy)
         self.centralwidget.setObjectName("centralwidget")
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout(self.centralwidget)
@@ -192,6 +209,15 @@ class Ui_MainWindow(object):
         self.menuEdit.addAction(self.actionRenamePlaylist)
         self.menubar.addAction(self.menuEdit.menuAction())
 
+        self.menuOptions = QtWidgets.QMenu(MainWindow)
+        self.menuOptions.setObjectName("menuOptions")
+        self.actionPreferences = QtWidgets.QAction(MainWindow)
+        self.actionPreferences.setObjectName("menuPreferences")
+        self.actionPreferences.triggered.connect(self.change_preferences)
+        self.menuOptions.addAction(self.actionPreferences)
+        self.menubar.addAction(self.menuOptions.menuAction())
+        self.options = Ui_Options()
+
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.album_art, self.add_similar_button)
@@ -218,6 +244,7 @@ class Ui_MainWindow(object):
         self.completed_length_label.setText(_translate("MainWindow", "Items: 0"))
         self.menuFile.setTitle(_translate("MainWindow", "File"))
         self.menuEdit.setTitle(_translate("MainWindow", "Edit"))
+        self.menuOptions.setTitle(_translate("MainWindow", "Options"))
         self.menuNew.setTitle(_translate("MainWindow", "New..."))
         self.menuExport.setTitle(_translate("MainWindow", "Export..."))
         self.actionfrom_m3u8.setText(_translate("MainWindow", "from .m3u8"))
@@ -226,6 +253,7 @@ class Ui_MainWindow(object):
         self.actionSave.setText(_translate("MainWindow", "Save..."))
         self.actionFilter.setText(_translate("MainWindow", "Add Filter..."))
         self.actionRenamePlaylist.setText(_translate("MainWindow", "Rename Playlist..."))
+        self.actionPreferences.setText(_translate("MainWindow", "Preferences..."))
     
     def load_m3u8(self, location):
         if not os.path.isfile(location) or not location.endswith(".m3u8"): return
@@ -360,6 +388,9 @@ class Ui_MainWindow(object):
         if ok and self.compiler != None:
             self.compiler.title = text
         self.update_info()
+
+    def change_preferences(self):
+        self.options.show()
 
 if __name__ == "__main__":
    app = QtWidgets.QApplication(sys.argv)
