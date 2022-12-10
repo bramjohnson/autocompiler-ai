@@ -1,5 +1,6 @@
 import os, time, utils, json, pickle
 from network.deejAI import make_playlist, contains_track
+from config import OPTIONS_DICT
 
 NETWORK_LOCATION = 'Network/Pickles/mp3tovecs/mp3tovec.p'
 
@@ -20,6 +21,9 @@ class Compiler:
                     self.queue.append(song.rstrip())
         for song in self.queue:
             self.queue_title_cache.append(utils.title(song))
+        if OPTIONS_DICT["auto_load_songs_on_open"]:
+            for song in range(len(self.queue)):
+                self.add_similar()
     
     def hasNext(self):
         return len(self.queue) > 0
@@ -38,7 +42,20 @@ class Compiler:
         track = self.pop_top()
         if not contains_track(track, self.mp3tovec):
             return
-        similar = [x for x in make_playlist([track], noise=0.07, lookback=0, filter=self.filter, mp3tovec=self.mp3tovec) if (x not in self.accepted and x not in self.queue and x not in self.removed and not x == track)]
+        # if not file_exists(track):
+            # return
+
+        negativeTracks = []
+        if OPTIONS_DICT["use_negative_weights"]:
+            negativeTracks = self.removed
+
+        similar = [x for x in make_playlist([track],
+        size=OPTIONS_DICT["amount_similar_tracks"],
+        noise=OPTIONS_DICT["random_noise"],
+        lookback=OPTIONS_DICT["playlist_lookback"],
+        filter=self.filter,
+        mp3tovec=self.mp3tovec,
+        negative=negativeTracks) if (x not in self.accepted and x not in self.queue and x not in self.removed and not x == track)]
         self.accepted.append(track)
         self.queue.extend(similar)
         for song in similar:

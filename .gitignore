@@ -7,4 +7,4 @@ venv/**
 config.yaml
 cover.*
 run.bat
-/__pycache__/**
+**/__pycache__/**

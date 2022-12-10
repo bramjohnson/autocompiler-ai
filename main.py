@@ -12,12 +12,66 @@ import sys, os, utils, config
 class Ui_Options(QWidget):
     def __init__(self):
         super().__init__()
+        self.setWindowTitle("Autocompiler 2.0 - Options")
         layout = QtWidgets.QVBoxLayout()
         self.label = QtWidgets.QLabel("Options:")
+
         self.auto_add = QtWidgets.QCheckBox("Auto-add songs on playlist load")
+        self.auto_add.setChecked(OPTIONS_DICT["auto_load_songs_on_open"])
+        self.auto_add.stateChanged.connect(self.saveOptions)
+
+        self.negative = QtWidgets.QCheckBox("Use removed songs as negative weights")
+        self.negative.setChecked(OPTIONS_DICT["use_negative_weights"])
+        self.negative.stateChanged.connect(self.saveOptions)
+
+        noiseLayout = QtWidgets.QHBoxLayout()
+        self.noiseLabel = QtWidgets.QLabel("Noise", self)
+        self.noise = QtWidgets.QDoubleSpinBox(self)
+        self.noise.setDecimals(2)
+        self.noise.setMinimum(0)
+        self.noise.setMaximum(1)
+        self.noise.setSingleStep(0.05)
+        self.noise.setValue(OPTIONS_DICT["random_noise"])
+        self.noise.valueChanged.connect(self.saveOptions)
+        noiseLayout.addWidget(self.noiseLabel)
+        noiseLayout.addWidget(self.noise)
+
+        lookbackLayout = QtWidgets.QHBoxLayout()
+        self.lookbackLabel = QtWidgets.QLabel("Lookback", self)
+        self.lookback = QtWidgets.QSpinBox(self)
+        self.lookback.setMinimum(0)
+        self.lookback.setMaximum(50)
+        self.lookback.setValue(OPTIONS_DICT["playlist_lookback"])
+        self.lookback.valueChanged.connect(self.saveOptions)
+        lookbackLayout.addWidget(self.lookbackLabel)
+        lookbackLayout.addWidget(self.lookback)
+
+        nextLayout = QtWidgets.QHBoxLayout()
+        self.nextLabel = QtWidgets.QLabel("# of Similar Songs", self)
+        self.next = QtWidgets.QSpinBox(self)
+        self.next.setMinimum(0)
+        self.next.setMaximum(50)
+        self.next.setValue(OPTIONS_DICT["amount_similar_tracks"])
+        self.next.valueChanged.connect(self.saveOptions)
+        nextLayout.addWidget(self.nextLabel)
+        nextLayout.addWidget(self.next)
+
         layout.addWidget(self.label)
         layout.addWidget(self.auto_add)
+        layout.addWidget(self.negative)
+        layout.addLayout(noiseLayout)
+        layout.addLayout(lookbackLayout)
+        layout.addLayout(nextLayout)
         self.setLayout(layout)
+
+    def saveOptions(self):
+        config.edit_config("auto_load_songs_on_open", self.auto_add.isChecked())
+        config.edit_config("use_negative_weights", self.negative.isChecked())
+        config.edit_config("random_noise", self.noise.value())
+        config.edit_config("playlist_lookback", self.lookback.value())
+        config.edit_config("amount_similar_tracks", self.next.value())
+        
+
         
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
