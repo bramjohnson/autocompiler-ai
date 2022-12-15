@@ -1,7 +1,9 @@
 from mutagen import File
 from PIL import Image
 from io import BytesIO
-import shutil
+import shutil, os
+
+Object = lambda **kwargs: type("Object", (), kwargs)
 
 def title(song):
     return get_tag(song, "TIT2")[0].text[0]

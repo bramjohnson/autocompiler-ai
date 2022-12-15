@@ -6,7 +6,7 @@ NETWORK_LOCATION = 'Network/Pickles/mp3tovecs/mp3tovec.p'
 
 class Compiler:
     def __init__(self, playlist = None, queue = [], accepted = [], removed = [], title = None) -> None:
-        self.queue = queue.copy()
+        self.queue = [x for x in queue.copy() if os.path.isfile(x)] # For removing potentially deleted files
         self.accepted = accepted.copy()
         self.removed = removed.copy()
         self.title = title
@@ -21,7 +21,7 @@ class Compiler:
                     self.queue.append(song.rstrip())
         for song in self.queue:
             self.queue_title_cache.append(utils.title(song))
-        if OPTIONS_DICT["auto_load_songs_on_open"]:
+        if OPTIONS_DICT["auto_load_songs_on_open"] and (playlist is not None):
             for song in range(len(self.queue)):
                 self.add_similar()
     
@@ -31,7 +31,7 @@ class Compiler:
     def next(self):
         if not self.hasNext():
             return
-        return self.queue[0].replace("\\", "/")
+        return self.queue[0].replace("\\", "/").replace("\\\\", "/")
 
     def pop_top(self):
         self.autosave.update()
@@ -42,8 +42,9 @@ class Compiler:
         track = self.pop_top()
         if not contains_track(track, self.mp3tovec):
             return
-        # if not file_exists(track):
-            # return
+        if not os.path.isfile(track):
+            return
+        print("Adding similar songs:", track)
 
         negativeTracks = []
         if OPTIONS_DICT["use_negative_weights"]:

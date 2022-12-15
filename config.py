@@ -15,7 +15,7 @@ OPTIONS_DICT = {
     "auto_load_songs_on_open": False,
     "use_negative_weights": False,
     "random_noise": 0.07,
-    "playlist_lookback": 10,
+    "playlist_lookback": 0,
     "amount_similar_tracks": 10
 }
 if (not os.path.exists('config.yaml')):

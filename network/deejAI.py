@@ -16,7 +16,8 @@ def most_similar(mp3tovec, positive=[], negative=[], topn=5, noise=0, filter=[""
     if isinstance(negative, str):
         negative = [negative] # broadcast to list
     if len(negative) > 0:
-        print("Using negative weights")
+        # print("Using negative weights")
+        pass
     mp3_vec_i = np.sum([mp3tovec[i] for i in positive] + [-mp3tovec[i] for i in negative], axis=0)
     mp3_vec_i += np.random.normal(0, noise * np.linalg.norm(mp3_vec_i), len(mp3_vec_i))
     similar = []
